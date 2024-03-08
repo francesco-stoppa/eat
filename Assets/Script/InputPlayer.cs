@@ -21,6 +21,10 @@ public class InputPlayer : MonoBehaviour
     GameObject belly;
     // Win condition ?
 
+    // map
+    public List<GameObject> map = new List<GameObject>();
+
+
     private void Awake()
     {
         input = new Pp();
@@ -31,22 +35,18 @@ public class InputPlayer : MonoBehaviour
     private void Start()
     {
         gameManager = Manager.Instance;
+        Transform lui = gameManager.GetMap().transform;
+        foreach (Transform child in lui)
+        {
+            map.Add(child.gameObject);
+        }
     }
     void Update()
     {
         BaseInput();
     }
 
-    #region FindCube
-    private void OnTriggerEnter(Collider other)
-    {
-        iFindSomething = true;
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        iFindSomething = false;
-    }
-    #endregion
+
 
     // remember to move the obstacle when you eat it
     void Eat()
@@ -54,19 +54,18 @@ public class InputPlayer : MonoBehaviour
         Vector3 nextMovePos = transform.position + Vector3.forward - Vector3.up;
 
         // start animation (attenzione se è full oppure no)
-        if (belly == null && iFindSomething)
+        if (belly == null)
         {
             belly.SetActive(false);
             belly.transform.position = Vector3.up * 2;
         }
-        else if (belly != null && !iFindSomething)
+        else if (belly != null)
         {
             belly.SetActive(true);
             belly.transform.position = nextMovePos;
         }
     }
     void Reset() { SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); }
-    #region PlayerInputMovement
     void BaseInput()
     {
         if (input.PlayerMovement.Up.triggered)
@@ -80,10 +79,9 @@ public class InputPlayer : MonoBehaviour
         {
             transform.eulerAngles = Vector3.zero;
             CheckMove();
-            Vector3 winPos = gameManager.GetWinColumns().transform.position;
+            /*Vector3 winPos = gameManager.GetWinColumns().transform.position;
             if (winPos + new Vector3(0, -2, -1) == transform.position && belly != null)
-                canMove = false;
-            Debug.Log(winPos); // <--
+                canMove = false;*/
             if (canMove == true)
             {
                 transform.position += Vector3.forward;
@@ -95,7 +93,7 @@ public class InputPlayer : MonoBehaviour
             transform.eulerAngles = Vector3.down * 90;
             CheckMove();
             if (canMove == true)
-            { transform.position += Vector3.left; canMove = false; }
+                transform.position += Vector3.left;
         }
         else if (input.PlayerMovement.Right.triggered)
         {
@@ -107,18 +105,13 @@ public class InputPlayer : MonoBehaviour
     }
     void CheckMove()
     {
-        Vector3 nextMovePos = transform.position + Vector3.forward - Vector3.up;
-        /*
         canMove = false;
-        foreach (GameObject tile in gameManager.GetGrid())
+        Vector3 nextMovePos = transform.position + Vector3.down + Vector3.forward;
+
+        /*foreach (GameObject tile in gameManager.GetGrid())
         {
-            if (nextMovePos == tile.transform.position)
+            if (ball.transform.position == tile.transform.position)
                 canMove = true;
-        }
-        foreach (GameObject cubeObstacle in gameManager.GetWhiteCube())
-        {
-            if (nextMovePos == cubeObstacle.transform.position)
-                canMove = false;
         }*/
         int move = 0;
         foreach (GameObject tile in gameManager.GetGrid())
@@ -126,13 +119,14 @@ public class InputPlayer : MonoBehaviour
             if (nextMovePos == tile.transform.position)
                 move++;
         }
-        
+       
         if (move > 0)
         {
             canMove = true;
         }
         else // if (move == 0)
             canMove = false;
+
 
     }
 
@@ -144,5 +138,4 @@ public class InputPlayer : MonoBehaviour
     {
         input.Disable();
     }
-    #endregion
 }

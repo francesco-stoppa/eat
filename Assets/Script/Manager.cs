@@ -34,6 +34,7 @@ public class Manager : MonoBehaviour
             grid.Add(child.gameObject);
         }
     }
+    public GameObject GetMap() { return map; }
     public GameObject GetWinColumns() { return winColumns; }
     public List<GameObject> GetGrid() { return grid; }
     public GameObject[] GetWhiteCube() { return whiteCube; }

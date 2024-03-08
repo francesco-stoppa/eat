@@ -22,9 +22,9 @@ public class GridCreator : MonoBehaviour
             for (int j = 0; j <= columns - 1; j++)
             {
                 Instantiate<GameObject>(tilePrefab, gridPos + new Vector3(i, 0, j), new Quaternion(), this.gameObject.transform);
-                Instantiate<GameObject>(tilePrefab, gridPos + new Vector3(rows - 1, 0, columns), new Quaternion(), this.gameObject.transform);
             }
         }
+        Instantiate<GameObject>(tilePrefab, gridPos + new Vector3(rows - 1, 0, columns), new Quaternion(), this.gameObject.transform);
         winColumns.transform.position = new Vector3(rows - 1, 1, columns);
     }
 }
